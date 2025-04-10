@@ -1,22 +1,29 @@
+// Shapes/RectangleShape.cs
 using System.Windows.Shapes;
+using System.Windows.Media;
 
 namespace WpfGraphicsApp.Shapes
 {
-    public class RectangleShape : Shape
+    public class RectangleShape : ShapeBase
     {
-        public double Width { get; set; } = 100;
-        public double Height { get; set; } = 100;
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Width { get; set; }
+        public double Height { get; set; }
 
-        public override System.Windows.Shapes.Shape Draw()
+        public override Shape Draw()
         {
             return new Rectangle
             {
-                Width = Width,
-                Height = Height,
                 Stroke = Stroke,
                 Fill = Fill,
-                StrokeThickness = StrokeThickness
+                StrokeThickness = StrokeThickness,
+                Width = Width,
+                Height = Height
             };
         }
+
+        public override string GetShapeType() => "Rectangle";
     }
 }
+

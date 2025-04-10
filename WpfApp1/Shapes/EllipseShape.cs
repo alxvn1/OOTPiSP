@@ -1,13 +1,14 @@
 using System.Windows.Shapes;
+using System.Windows.Media;
 
 namespace WpfGraphicsApp.Shapes
 {
-    public class EllipseShape : Shape
+    public class EllipseShape : ShapeBase
     {
         public double Width { get; set; } = 100;
         public double Height { get; set; } = 100;
 
-        public override System.Windows.Shapes.Shape Draw()
+        public override Shape Draw()
         {
             return new Ellipse
             {
@@ -18,5 +19,7 @@ namespace WpfGraphicsApp.Shapes
                 StrokeThickness = StrokeThickness
             };
         }
+
+        public override string GetShapeType() => "Ellipse";
     }
 }

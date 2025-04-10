@@ -2,7 +2,7 @@ using System.Windows.Shapes;
 
 namespace WpfGraphicsApp.Shapes
 {
-    public class LineShape : Shape
+    internal class LineShape : ShapeBase
     {
         public double X1 { get; set; } = 100;
         public double Y1 { get; set; } = 100;
@@ -20,6 +20,11 @@ namespace WpfGraphicsApp.Shapes
                 Stroke = Stroke,
                 StrokeThickness = StrokeThickness
             };
+        }
+
+        public override string GetShapeType()
+        {
+            return "Line"; // Реализуем абстрактный метод
         }
     }
 }
