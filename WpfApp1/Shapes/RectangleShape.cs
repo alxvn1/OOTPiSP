@@ -1,4 +1,4 @@
-// Shapes/RectangleShape.cs
+using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Windows.Media;
 
@@ -13,14 +13,20 @@ namespace WpfGraphicsApp.Shapes
 
         public override Shape Draw()
         {
-            return new Rectangle
+            var rect = new Rectangle
             {
+                Width = Width,
+                Height = Height,
                 Stroke = Stroke,
                 Fill = Fill,
-                StrokeThickness = StrokeThickness,
-                Width = Width,
-                Height = Height
+                StrokeThickness = StrokeThickness
             };
+    
+            // Устанавливаем позицию на Canvas
+            Canvas.SetLeft(rect, X);
+            Canvas.SetTop(rect, Y);
+    
+            return rect;
         }
 
         public override string GetShapeType() => "Rectangle";

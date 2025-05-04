@@ -13,7 +13,14 @@ namespace WpfGraphicsApp.UndoRedo
             _shape = shape;
         }
 
-        public void Execute() => _shapeManager.AddShape(_shape);
-        public void Undo() => _shapeManager.RemoveShape(_shape);
+        public void Execute()
+        {
+            _shapeManager.AddShape(_shape);
+        }
+
+        public void Undo()
+        {
+            _shapeManager.RemoveShape(_shape);
+        }
     }
 }

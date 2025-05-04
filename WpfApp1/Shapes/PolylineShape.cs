@@ -13,9 +13,9 @@ namespace WpfGraphicsApp.Shapes
             return new Polyline
             {
                 Stroke = Stroke,
-                Fill = Fill,
+                Fill = Brushes.Transparent,
                 StrokeThickness = StrokeThickness,
-                Points = Points
+                Points = Points,
             };
         }
 

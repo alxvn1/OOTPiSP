@@ -1,45 +1,66 @@
-using System;
 using System.Windows;
-using System.Windows.Shapes;
 using System.Windows.Media;
-using System.Collections.Generic;
+using System.Windows.Shapes;
 
 namespace WpfGraphicsApp.Shapes
 {
-    internal class PolygonShape : ShapeBase
+    /*public class PolygonShape : ShapeBase
     {
-        public int Sides { get; set; } = 3;
         public PointCollection Points { get; set; } = new PointCollection();
-
+    
         public override Shape Draw()
         {
-            Polygon polygon = new Polygon
+            var path = new Path
             {
                 Stroke = Stroke,
                 Fill = Fill,
                 StrokeThickness = StrokeThickness,
-                Points = this.Points
+                Data = CreatePathGeometry()
             };
-
-            // Если Points пуст, создаем правильный многоугольник
-            if (Points.Count == 0)
-            {
-                double centerX = 200, centerY = 200, radius = 100;
-                for (int i = 0; i < Sides; i++)
-                {
-                    double angle = 2 * Math.PI * i / Sides;
-                    double x = centerX + radius * Math.Cos(angle);
-                    double y = centerY + radius * Math.Sin(angle);
-                    polygon.Points.Add(new Point(x, y));
-                }
-            }
-
-            return polygon;
+            return path;
         }
-
-        public override string GetShapeType()
+    
+        private PathGeometry CreatePathGeometry()
         {
-            return "Polygon";
+            var geometry = new PathGeometry();
+            
+            if (Points.Count < 2) 
+                return geometry;
+    
+            var figure = new PathFigure { StartPoint = Points[0] };
+    
+            for (int i = 1; i < Points.Count; i++)
+            {
+                figure.Segments.Add(new LineSegment(Points[i], true));
+            }
+    
+            // Замыкаем фигуру
+            if (Points.Count > 2)
+            {
+                figure.IsClosed = true;
+            }
+    
+            geometry.Figures.Add(figure);
+            return geometry;
         }
+    
+        public override string GetShapeType() => "Polygon";
+    }*/
+    public class PolygonShape : ShapeBase
+    {
+        public PointCollection Points { get; set; } = new PointCollection();
+
+        public override Shape Draw()
+        {
+            return new Polygon
+            {
+                Points = Points,
+                Stroke = Stroke,
+                Fill = Fill, // Сохраняем установленную заливку
+                StrokeThickness = StrokeThickness
+            };
+        }
+
+        public override string GetShapeType() => "Polygon";
     }
 }

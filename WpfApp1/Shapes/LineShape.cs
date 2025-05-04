@@ -1,3 +1,4 @@
+using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace WpfGraphicsApp.Shapes
@@ -18,7 +19,8 @@ namespace WpfGraphicsApp.Shapes
                 X2 = X2,
                 Y2 = Y2,
                 Stroke = Stroke,
-                StrokeThickness = StrokeThickness
+                StrokeThickness = StrokeThickness,
+                // Fill = Brushes.Transparent
             };
         }
 
