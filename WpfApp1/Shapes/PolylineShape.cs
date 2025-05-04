@@ -1,28 +1,24 @@
-using System.Windows;
+// Shapes/PolylineShape.cs
 using System.Windows.Shapes;
 using System.Windows.Media;
 
 namespace WpfGraphicsApp.Shapes
 {
-    public class PolylineShape : Shape
+    public class PolylineShape : ShapeBase
     {
-        public PointCollection Points { get; set; } = new PointCollection
-        {
-            new Point(100, 100),
-            new Point(150, 50),
-            new Point(200, 100),
-            new Point(250, 50),
-            new Point(300, 100)
-        };
+        public PointCollection Points { get; set; } = new PointCollection();
 
-        public override System.Windows.Shapes.Shape Draw()
+        public override Shape Draw()
         {
             return new Polyline
             {
-                Points = Points,
                 Stroke = Stroke,
-                StrokeThickness = StrokeThickness
+                Fill = Brushes.Transparent,
+                StrokeThickness = StrokeThickness,
+                Points = Points,
             };
         }
+
+        public override string GetShapeType() => "Polyline";
     }
 }

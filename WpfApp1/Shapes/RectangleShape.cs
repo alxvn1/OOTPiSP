@@ -1,15 +1,19 @@
+using System.Windows.Controls;
 using System.Windows.Shapes;
+using System.Windows.Media;
 
 namespace WpfGraphicsApp.Shapes
 {
-    public class RectangleShape : Shape
+    public class RectangleShape : ShapeBase
     {
-        public double Width { get; set; } = 100;
-        public double Height { get; set; } = 100;
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Width { get; set; }
+        public double Height { get; set; }
 
-        public override System.Windows.Shapes.Shape Draw()
+        public override Shape Draw()
         {
-            return new Rectangle
+            var rect = new Rectangle
             {
                 Width = Width,
                 Height = Height,
@@ -17,6 +21,15 @@ namespace WpfGraphicsApp.Shapes
                 Fill = Fill,
                 StrokeThickness = StrokeThickness
             };
+    
+            // Устанавливаем позицию на Canvas
+            Canvas.SetLeft(rect, X);
+            Canvas.SetTop(rect, Y);
+    
+            return rect;
         }
+
+        public override string GetShapeType() => "Rectangle";
     }
 }
+

@@ -1,15 +1,19 @@
+using System.Windows.Controls;
 using System.Windows.Shapes;
+using System.Windows.Media;
 
 namespace WpfGraphicsApp.Shapes
 {
-    public class EllipseShape : Shape
+    public class EllipseShape : ShapeBase
     {
+        public double X { get; set; }
+        public double Y { get; set; }
         public double Width { get; set; } = 100;
         public double Height { get; set; } = 100;
 
-        public override System.Windows.Shapes.Shape Draw()
+        public override Shape Draw()
         {
-            return new Ellipse
+            var ellipse = new Ellipse
             {
                 Width = Width,
                 Height = Height,
@@ -17,6 +21,14 @@ namespace WpfGraphicsApp.Shapes
                 Fill = Fill,
                 StrokeThickness = StrokeThickness
             };
+    
+            // Устанавливаем позицию на Canvas
+            Canvas.SetLeft(ellipse, X);
+            Canvas.SetTop(ellipse, Y);
+    
+            return ellipse;
         }
+
+        public override string GetShapeType() => "Ellipse";
     }
 }

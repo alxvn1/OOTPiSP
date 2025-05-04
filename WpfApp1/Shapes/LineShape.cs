@@ -1,8 +1,9 @@
+using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace WpfGraphicsApp.Shapes
 {
-    public class LineShape : Shape
+    internal class LineShape : ShapeBase
     {
         public double X1 { get; set; } = 100;
         public double Y1 { get; set; } = 100;
@@ -18,8 +19,14 @@ namespace WpfGraphicsApp.Shapes
                 X2 = X2,
                 Y2 = Y2,
                 Stroke = Stroke,
-                StrokeThickness = StrokeThickness
+                StrokeThickness = StrokeThickness,
+                // Fill = Brushes.Transparent
             };
+        }
+
+        public override string GetShapeType()
+        {
+            return "Line"; // Реализуем абстрактный метод
         }
     }
 }
