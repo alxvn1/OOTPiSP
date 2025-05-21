@@ -3,14 +3,14 @@ using System.Windows.Shapes;
 
 namespace WpfGraphicsApp.Shapes
 {
-    internal class LineShape : ShapeBase
+    public class LineShape : ShapeBase  // Изменено с internal на public
     {
         public double X1 { get; set; } = 100;
         public double Y1 { get; set; } = 100;
         public double X2 { get; set; } = 300;
         public double Y2 { get; set; } = 200;
 
-        public override System.Windows.Shapes.Shape Draw()
+        public override Shape Draw()
         {
             return new Line
             {
@@ -19,14 +19,10 @@ namespace WpfGraphicsApp.Shapes
                 X2 = X2,
                 Y2 = Y2,
                 Stroke = Stroke,
-                StrokeThickness = StrokeThickness,
-                // Fill = Brushes.Transparent
+                StrokeThickness = StrokeThickness
             };
         }
 
-        public override string GetShapeType()
-        {
-            return "Line"; // Реализуем абстрактный метод
-        }
+        public override string GetShapeType() => "Line";
     }
 }

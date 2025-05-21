@@ -2,21 +2,23 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using WpfGraphicsApp.Shapes;
+using System.Collections.Generic;
 
 namespace WpfGraphicsApp.Tools
 {
     public class PolygonTool : DrawingTool
     {
-        private PointCollection _points = new PointCollection();
+        private List<PolygonShape.PointModel> _points = new List<PolygonShape.PointModel>();
         private Polygon _previewPolygon;
         private bool _isFirstPoint = true;
+        private Point _startPoint;
 
         public override Shape CreatePreviewShape()
         {
             _previewPolygon = new Polygon
             {
                 Stroke = Stroke,
-                Fill = Fill, // Явно применяем заливку
+                Fill = Fill,
                 StrokeThickness = StrokeThickness,
                 Points = new PointCollection()
             };
@@ -27,23 +29,20 @@ namespace WpfGraphicsApp.Tools
         {
             if (_isFirstPoint)
             {
-                // Начало нового полигона
                 _points.Clear();
-                _points.Add(position);
+                _points.Add(new PolygonShape.PointModel { X = position.X, Y = position.Y });
                 _isFirstPoint = false;
-                StartPoint = position;
+                _startPoint = position;
             }
             else
             {
-                // Проверка на замыкание полигона
                 if (ShouldCompletePolygon(position))
                 {
                     CompletePolygon();
                     return;
                 }
 
-                // Добавление обычной точки
-                _points.Add(position);
+                _points.Add(new PolygonShape.PointModel { X = position.X, Y = position.Y });
             }
 
             UpdatePreview(position);
@@ -53,11 +52,14 @@ namespace WpfGraphicsApp.Tools
         {
             if (_isFirstPoint) return;
 
-            // Обновляем предпросмотр с текущей позицией мыши
-            var tempPoints = new PointCollection(_points) { position };
+            var tempPoints = new PointCollection();
+            foreach (var point in _points)
+            {
+                tempPoints.Add(new Point(point.X, point.Y));
+            }
+            tempPoints.Add(position);
             _previewPolygon.Points = tempPoints;
 
-            // Подсветка для замыкания
             _previewPolygon.Stroke = ShouldCompletePolygon(position) 
                 ? Brushes.Green 
                 : Stroke;
@@ -72,7 +74,7 @@ namespace WpfGraphicsApp.Tools
         {
             if (_points.Count < 2) return false;
             
-            Vector delta = position - _points[0];
+            Vector delta = position - _startPoint;
             return delta.Length < 15.0;
         }
 
@@ -82,9 +84,9 @@ namespace WpfGraphicsApp.Tools
             {
                 var polygonShape = new PolygonShape
                 {
-                    Points = new PointCollection(_points) { _points[0] }, // Замыкаем фигуру
+                    Points = new List<PolygonShape.PointModel>(_points),
                     Stroke = Stroke,
-                    Fill = Fill, // Явно применяем заливку
+                    Fill = Fill,
                     StrokeThickness = StrokeThickness
                 };
 
@@ -98,7 +100,12 @@ namespace WpfGraphicsApp.Tools
         {
             if (_previewPolygon == null) return;
 
-            var tempPoints = new PointCollection(_points) { currentPosition };
+            var tempPoints = new PointCollection();
+            foreach (var point in _points)
+            {
+                tempPoints.Add(new Point(point.X, point.Y));
+            }
+            tempPoints.Add(currentPosition);
             _previewPolygon.Points = tempPoints;
         }
 
@@ -107,6 +114,7 @@ namespace WpfGraphicsApp.Tools
             var mainWindow = Application.Current.MainWindow as MainWindow;
             mainWindow?.DrawingCanvas.Children.Remove(_previewPolygon);
             ResetTool();
+            _previewPolygon = null;
         }
 
         private void ResetTool()

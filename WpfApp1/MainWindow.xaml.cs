@@ -132,19 +132,59 @@ namespace WpfGraphicsApp
         }
         
         // File operations handlers
+        // Для сохранения
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            var saveFileDialog = new SaveFileDialog
+            var saveDialog = new Microsoft.Win32.SaveFileDialog
             {
-                Filter = "JSON File (*.json)|*.json",
+                Filter = "JSON files (*.json)|*.json",
                 DefaultExt = ".json"
             };
-
-            if (saveFileDialog.ShowDialog() == true)
+    
+            if (saveDialog.ShowDialog() == true)
             {
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                string json = JsonSerializer.Serialize(_shapeManager.Shapes.ToList(), options);
-                File.WriteAllText(saveFileDialog.FileName, json);
+                try
+                {
+                    ShapeSerializer.SaveShapesToFile(_shapeManager.Shapes.ToList(), saveDialog.FileName);
+                    
+                }
+                catch (Exception ex)
+                {
+                    
+                }
+            }
+        }
+
+// Для загрузки
+        private void LoadButton_Click(object sender, RoutedEventArgs e)
+        {
+            var openDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "JSON files (*.json)|*.json",
+                DefaultExt = ".json"
+            };
+    
+            if (openDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    _shapeManager.LoadFromFile(openDialog.FileName, DrawingCanvas);
+                    var shapes = ShapeSerializer.LoadShapesFromFile(openDialog.FileName);
+                    _shapeManager.Clear();
+                    DrawingCanvas.Children.Clear();
+            
+                    foreach (var shape in shapes)
+                    {
+                        _shapeManager.ExecuteCommand(new DrawCommand(_shapeManager, shape));
+                        DrawingCanvas.Children.Add(shape.Draw());
+                    }
+            
+                    
+                }
+                catch (Exception ex)
+                {
+                    
+                }
             }
         }
 
@@ -157,15 +197,22 @@ namespace WpfGraphicsApp
 
             if (openFileDialog.ShowDialog() == true)
             {
-                string json = File.ReadAllText(openFileDialog.FileName);
-                var shapes = JsonSerializer.Deserialize<List<ShapeBase>>(json);
-                _shapeManager.Clear();
-                foreach (var shape in shapes)
+                try
                 {
-                    _shapeManager.ExecuteCommand(new DrawCommand(_shapeManager, shape));
+                    var shapes = ShapeSerializer.LoadShapesFromFile(openFileDialog.FileName);
+                    _shapeManager.Clear();
+                    foreach (var shape in shapes)
+                    {
+                        _shapeManager.ExecuteCommand(new DrawCommand(_shapeManager, shape));
+                    }
+                    RedrawCanvas();
                 }
-                RedrawCanvas();
+                catch (Exception ex)
+                {
+                    
+                }
             }
+            RedrawCanvas(); // Явный вызов перерисовки
         }
 
         private void ClearButton_Click(object sender, RoutedEventArgs e)
@@ -204,14 +251,15 @@ namespace WpfGraphicsApp
         private void DrawPolygon_Click(object sender, RoutedEventArgs e)
         {
             var polygon = new PolygonShape();
-            polygon.Points = new PointCollection(new List<Point>
+            // Заменяем PointCollection на List<PointModel>
+            polygon.Points = new List<PolygonShape.PointModel>
             {
-                new Point(100, 0),
-                new Point(200, 50),
-                new Point(150, 150),
-                new Point(50, 150),
-                new Point(0, 50)
-            });
+                new PolygonShape.PointModel { X = 100, Y = 0 },
+                new PolygonShape.PointModel { X = 200, Y = 50 },
+                new PolygonShape.PointModel { X = 150, Y = 150 },
+                new PolygonShape.PointModel { X = 50, Y = 150 },
+                new PolygonShape.PointModel { X = 0, Y = 50 }
+            };
             AddShapeToCanvas(polygon);
         }
 
@@ -234,14 +282,15 @@ namespace WpfGraphicsApp
         private void DrawPolyline_Click(object sender, RoutedEventArgs e)
         {
             var polyline = new PolylineShape();
-            polyline.Points = new PointCollection(new List<Point>
+            // Заменяем PointCollection на List<PointModel>
+            polyline.Points = new List<PolylineShape.PointModel>
             {
-                new Point(50, 50),
-                new Point(100, 150),
-                new Point(150, 50),
-                new Point(200, 150),
-                new Point(250, 50)
-            });
+                new PolylineShape.PointModel { X = 50, Y = 50 },
+                new PolylineShape.PointModel { X = 100, Y = 150 },
+                new PolylineShape.PointModel { X = 150, Y = 50 },
+                new PolylineShape.PointModel { X = 200, Y = 150 },
+                new PolylineShape.PointModel { X = 250, Y = 50 }
+            };
             AddShapeToCanvas(polyline);
         }
 
@@ -387,20 +436,44 @@ namespace WpfGraphicsApp
         private void RedrawCanvas()
         {
             DrawingCanvas.Children.Clear();
-    
-            // Отрисовываем все фигуры из истории
+
             foreach (var shape in _shapeManager.Shapes)
             {
+                Console.WriteLine($"Drawing {shape.GetType().Name}");
                 var uiElement = shape.Draw();
                 DrawingCanvas.Children.Add(uiElement);
             }
-    
-            // Восстанавливаем превью, если есть активное рисование
-            if (_isDrawing && _previewShape != null)
+        }
+        
+        private void SaveDrawing_Click(object sender, RoutedEventArgs e)
+        {
+            var saveDialog = new Microsoft.Win32.SaveFileDialog
             {
-                DrawingCanvas.Children.Add(_previewShape);
+                Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*",
+                DefaultExt = ".json"
+            };
+    
+            if (saveDialog.ShowDialog() == true)
+            {
+                _shapeManager.SaveToFile(saveDialog.FileName);
             }
         }
+
+        private void LoadDrawing_Click(object sender, RoutedEventArgs e)
+        {
+            var openDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*",
+                DefaultExt = ".json"
+            };
+
+            if (openDialog.ShowDialog() == true)
+            {
+                _shapeManager.LoadFromFile(openDialog.FileName, DrawingCanvas); // Передача DrawingCanvas
+                RedrawCanvas();
+            }
+        }
+        
         
     }
 }

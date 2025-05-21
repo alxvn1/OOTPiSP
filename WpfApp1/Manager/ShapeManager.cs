@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using WpfGraphicsApp.Shapes;
 using WpfGraphicsApp.UndoRedo;
+using System.Windows.Controls; // Для Canvas
 
 namespace WpfGraphicsApp
 {
@@ -21,6 +22,8 @@ namespace WpfGraphicsApp
             _shapeManager.Clear();
         }
 
+        
+        
         public void Undo()
         {
             foreach (var shape in _clearedShapes)
@@ -29,7 +32,7 @@ namespace WpfGraphicsApp
             }
         }
     }
-    
+
     public class ShapeManager
     {
         private readonly Stack<ICommand> _undoStack = new Stack<ICommand>();
@@ -50,6 +53,12 @@ namespace WpfGraphicsApp
             _shapes.Add(shape);
         }
 
+        public void AddShapeToCanvas(ShapeBase shape, Canvas drawingCanvas)
+        {
+            var uiElement = shape.Draw(); // Получение UI элемента
+            drawingCanvas.Children.Add(uiElement); // Добавление на холст
+        }
+        
         public void RemoveShape(ShapeBase shape)
         {
             _shapes.Remove(shape);
@@ -78,6 +87,28 @@ namespace WpfGraphicsApp
         public void Clear()
         {
             _shapes.Clear();
+            _undoStack.Clear();
+            _redoStack.Clear();
+        }
+
+        // Добавить эти новые методы:
+        public void SaveToFile(string filePath)
+        {
+            ShapeSerializer.SaveShapesToFile(_shapes, filePath);
+        }
+
+        public void LoadFromFile(string filePath, Canvas drawingCanvas)
+        {
+            var loadedShapes = ShapeSerializer.LoadShapesFromFile(filePath);
+            _shapes.Clear();
+            drawingCanvas.Children.Clear(); // Очистите холст перед загрузкой
+
+            foreach (var shape in loadedShapes)
+            {
+                AddShape(shape); // Добавление в менеджер
+                AddShapeToCanvas(shape, drawingCanvas); // Добавление на холст
+            }
+
             _undoStack.Clear();
             _redoStack.Clear();
         }

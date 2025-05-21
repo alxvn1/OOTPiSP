@@ -1,6 +1,8 @@
+using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Shapes;
 using System.Windows.Media;
+using System.Windows.Shapes;
+using Newtonsoft.Json;
 
 namespace WpfGraphicsApp.Shapes
 {
@@ -10,6 +12,21 @@ namespace WpfGraphicsApp.Shapes
         public double Y { get; set; }
         public double Width { get; set; }
         public double Height { get; set; }
+
+        // Сериализуемые свойства цвета
+        public string StrokeColor
+        {
+            get => Stroke?.ToString() ?? Brushes.Black.ToString();
+            set => Stroke = new SolidColorBrush((Color)ColorConverter.ConvertFromString(value));
+        }
+
+        public string FillColor
+        {
+            get => Fill?.ToString() ?? Brushes.Transparent.ToString();
+            set => Fill = string.IsNullOrEmpty(value) 
+                ? Brushes.Transparent 
+                : new SolidColorBrush((Color)ColorConverter.ConvertFromString(value));
+        }
 
         public override Shape Draw()
         {
@@ -22,7 +39,6 @@ namespace WpfGraphicsApp.Shapes
                 StrokeThickness = StrokeThickness
             };
     
-            // Устанавливаем позицию на Canvas
             Canvas.SetLeft(rect, X);
             Canvas.SetTop(rect, Y);
     
@@ -32,4 +48,3 @@ namespace WpfGraphicsApp.Shapes
         public override string GetShapeType() => "Rectangle";
     }
 }
-

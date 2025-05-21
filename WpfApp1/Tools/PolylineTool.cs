@@ -2,12 +2,14 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using WpfGraphicsApp.Shapes;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace WpfGraphicsApp.Tools
 {
     public class PolylineTool : DrawingTool
     {
-        private PointCollection _points = new PointCollection();
+        private List<PolylineShape.PointModel> _points = new List<PolylineShape.PointModel>();
         private Polyline _previewPolyline;
 
         public override Shape CreatePreviewShape()
@@ -23,21 +25,37 @@ namespace WpfGraphicsApp.Tools
 
         public override void OnMouseDown(Point position)
         {
-            _points.Add(position);
-            _previewPolyline.Points = new PointCollection(_points);
+            _points.Add(new PolylineShape.PointModel { X = position.X, Y = position.Y });
+            UpdatePreview();
         }
 
         public override void OnMouseMove(Point position, Shape previewShape)
         {
             if (_points.Count == 0) return;
             
-            var tempPoints = new PointCollection(_points) { position };
+            var tempPoints = new PointCollection();
+            foreach (var point in _points)
+            {
+                tempPoints.Add(new Point(point.X, point.Y));
+            }
+            tempPoints.Add(position);
             _previewPolyline.Points = tempPoints;
         }
 
         public override ShapeBase OnMouseUp(Point position)
         {
-            return null; // Превью остается видимым
+            // Для полилинии все обрабатывается в других методах
+            return null;
+        }
+
+        private void UpdatePreview()
+        {
+            var tempPoints = new PointCollection();
+            foreach (var point in _points)
+            {
+                tempPoints.Add(new Point(point.X, point.Y));
+            }
+            _previewPolyline.Points = tempPoints;
         }
 
         public ShapeBase CompleteDrawing()
@@ -46,7 +64,7 @@ namespace WpfGraphicsApp.Tools
             {
                 return new PolylineShape
                 {
-                    Points = new PointCollection(_points),
+                    Points = _points.ToList(), // Исправлено преобразование типов
                     Stroke = Stroke,
                     StrokeThickness = StrokeThickness
                 };
@@ -61,6 +79,7 @@ namespace WpfGraphicsApp.Tools
             {
                 _previewPolyline.Points.Clear();
             }
+            _previewPolyline = null;
         }
     }
 }
