@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Media;
 using Xceed.Wpf.Toolkit;
 using System.Windows.Shapes;
