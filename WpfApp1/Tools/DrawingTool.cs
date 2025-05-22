@@ -6,7 +6,7 @@ using WpfGraphicsApp.Shapes;
 namespace WpfGraphicsApp.Tools
 {
     public abstract class DrawingTool
-    {
+    {   
         public Point StartPoint { get; set; }
         public Brush Stroke { get; set; } = Brushes.Black;
         public Brush Fill { get; set; } = Brushes.Transparent;
@@ -29,3 +29,7 @@ namespace WpfGraphicsApp.Tools
         }
     }
 }
+
+
+
+    

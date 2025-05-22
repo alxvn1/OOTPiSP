@@ -6,10 +6,11 @@ namespace WpfGraphicsApp.Shapes
 {
     public class EllipseShape : ShapeBase
     {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Width { get; set; } = 100;
-        public double Height { get; set; } = 100;
+            public double X { get; set; }
+            public double Y { get; set; }
+            public double Width { get; set; } = 100;
+            public double Height { get; set; } = 100;
+            
 
         public override Shape Draw()
         {
