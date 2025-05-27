@@ -31,5 +31,10 @@ namespace WpfGraphicsApp.Shapes
 
         public abstract Shape Draw();
         public abstract string GetShapeType();
+        
+        //создать метод кот будте возвращать новый обект трапецию
+        public abstract ShapeBase GetInstance();
+        
+        
     }
 }

@@ -25,43 +25,29 @@ namespace WpfGraphicsApp.Shapes
             }
         }
 
-        public Brush Fill { get; set; } = Brushes.Transparent;
-
-        [JsonProperty("FillColor")]
-        public string FillColor
-        {
-            get => (Fill as SolidColorBrush)?.Color.ToString() ?? Brushes.Transparent.ToString();
-            set => Fill = string.IsNullOrEmpty(value) ? Brushes.Transparent : new SolidColorBrush((Color)ColorConverter.ConvertFromString(value));
-        }
-
-        [JsonIgnore]
-        public Brush Stroke { get; set; } = Brushes.Black;
-
-        [JsonProperty("StrokeColor")]
-        public string StrokeColorString
-        {
-            get => (Stroke as SolidColorBrush)?.Color.ToString() ?? Brushes.Black.ToString();
-            set => Stroke = string.IsNullOrEmpty(value) ? Brushes.Black : new SolidColorBrush((Color)ColorConverter.ConvertFromString(value));
-        }
-
         public override Shape Draw()
         {
-            var pointCollection = new PointCollection();
-            foreach (var point in Points)
-            {
-                pointCollection.Add(new Point(point.X, point.Y));
-            }
-    
             return new Polygon
             {
-                Points = pointCollection,
+                Points = PointCollection,
                 Stroke = Stroke,
-                Fill = Fill,
+                Fill = Fill,  // Для полигона оставляем заливку
                 StrokeThickness = StrokeThickness
             };
         }
 
         public override string GetShapeType() => "Polygon";
+
+        public override ShapeBase GetInstance()
+        {
+            return new PolygonShape
+            {
+                Points = new List<PointModel>(this.Points),
+                Stroke = this.Stroke?.Clone(),
+                Fill = this.Fill?.Clone(),
+                StrokeThickness = this.StrokeThickness
+            };
+        }
 
         public class PointModel
         {
@@ -69,20 +55,6 @@ namespace WpfGraphicsApp.Shapes
             public double Y { get; set; }
         }
     }
-    
-    // public string StrokeColor
-    // {
-    //     get => Stroke?.ToString() ?? Brushes.Black.ToString();
-    //     set => Stroke = new SolidColorBrush((Color)ColorConverter.ConvertFromString(value));
-    // }
-    //
-    // public string FillColor
-    // {
-    //     get => Fill?.ToString() ?? Brushes.Transparent.ToString();
-    //     set => Fill = string.IsNullOrEmpty(value) 
-    //         ? Brushes.Transparent 
-    //         : new SolidColorBrush((Color)ColorConverter.ConvertFromString(value));
-    // }
 
     public static class PolygonExtensions
     {

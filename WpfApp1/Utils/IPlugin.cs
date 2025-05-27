@@ -21,11 +21,21 @@ namespace WpfGraphicsApp
         public override Shape Draw() => new Path
         {
             Data = Geometry.Parse("M50,0 L61,35 L98,35 L68,57 L79,92 L50,70 L21,92 L32,57 L2,35 L39,35 Z"),
-            Stroke = this.Stroke,
-            Fill = this.Fill,
-            StrokeThickness = this.StrokeThickness
+            Stroke = Stroke,
+            Fill = Fill,
+            StrokeThickness = StrokeThickness
         };
 
         public override string GetShapeType() => "Star";
+        
+        public override ShapeBase GetInstance()
+        {
+            return new StarShape
+            {
+                Stroke = Stroke,
+                Fill = Fill,
+                StrokeThickness = StrokeThickness
+            };
+        }
     }
 }

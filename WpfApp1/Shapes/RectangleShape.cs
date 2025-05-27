@@ -46,5 +46,9 @@ namespace WpfGraphicsApp.Shapes
         }
 
         public override string GetShapeType() => "Rectangle";
+        public override ShapeBase GetInstance()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
