@@ -24,26 +24,30 @@ namespace WpfGraphicsApp.Shapes
                 return collection;
             }
         }
-            
 
         public override Shape Draw()
         {
-            var pointCollection = new PointCollection();
-            foreach (var point in Points)
-            {
-                pointCollection.Add(new Point(point.X, point.Y));
-            }
-    
             return new Polyline
             {
-                Points = pointCollection,
+                Points = PointCollection,
                 Stroke = Stroke,
-                Fill = Fill,
+                Fill = Brushes.Transparent, // Явно устанавливаем прозрачную заливку
                 StrokeThickness = StrokeThickness
             };
         }
 
         public override string GetShapeType() => "Polyline";
+
+        public override ShapeBase GetInstance()
+        {
+            return new PolylineShape
+            {
+                Points = new List<PointModel>(this.Points),
+                Stroke = this.Stroke?.Clone(),
+                StrokeThickness = this.StrokeThickness
+                // Fill не копируем, так как он не используется
+            };
+        }
 
         public class PointModel
         {

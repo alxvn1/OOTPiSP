@@ -31,5 +31,9 @@ namespace WpfGraphicsApp.Shapes
         }
 
         public override string GetShapeType() => "Ellipse";
+        public override ShapeBase GetInstance()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

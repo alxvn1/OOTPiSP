@@ -24,5 +24,9 @@ namespace WpfGraphicsApp.Shapes
         }
 
         public override string GetShapeType() => "Line";
+        public override ShapeBase GetInstance()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
